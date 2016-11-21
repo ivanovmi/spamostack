@@ -28,42 +28,42 @@ import logger
 from simulator import Simulator
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--conf', dest='conf',
-                    default='/etc/spamostack/conf.json',
-                    help='Path to the config file with pipes')
-parser.add_argument('--db', dest='db', default='./db',
-                    help='Path to the database directory')
-parser.add_argument('--verbose', action='store_true',
-                    help='Increase verbose output')
-parser.add_argument('--clean', dest='clean', nargs='+',
-                    help='Path to the database directory')
-args = parser.parse_args()
-
-log = logging.getLogger(__name__)
-if args.verbose:
-    log.setLevel(logging.DEBUG)
-    level = 'DEBUG'
-else:
-    log.setLevel(logging.INFO)
-    level = 'INFO'
-log.addHandler(logger.SpamStreamHandler())
-coloredlogs.install(level=level)
-
-
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--conf', dest='conf',
+                        default='/etc/spamostack/conf.json',
+                        help='Path to the config file with pipes')
+    parser.add_argument('--db', dest='db', default='./db',
+                        help='Path to the database directory')
+    parser.add_argument('--verbose', action='store_true',
+                        help='Increase verbose output')
+    parser.add_argument('--clean', dest='clean', nargs='+',
+                        help='Path to the database directory')
+    args = parser.parse_args()
+
+    log = logging.getLogger(__name__)
+    if args.verbose:
+        log.setLevel(logging.DEBUG)
+        level = 'DEBUG'
+    else:
+        log.setLevel(logging.INFO)
+        level = 'INFO'
+    log.addHandler(logger.SpamStreamHandler())
+    coloredlogs.install(level=level)
+
     try:
-        if args.conf:
-            log.info("Reading conf from {}".format(args.conf))
-            with open(args.conf, 'r') as pipes_file:
-                conf = json.load(pipes_file,
-                                 object_pairs_hook=collections.OrderedDict)
+        log.info("Reading conf from {}".format(args.conf))
+        with open(args.conf, 'r') as pipes_file:
+            conf = json.load(pipes_file,
+                             object_pairs_hook=collections.OrderedDict)
 
         simulators = []
         cache = Cache(args.db)
 
-        admin_user = cache["users"]["admin"]
-        admin_user["auth_url"] = cache["api"]["auth_url"]
+        users = cache["users"]
+        admin_user = users["admin"]
+        api = cache["api"]
+        admin_user["auth_url"] = api["auth_url"]
 
         admin_factory = ClientFactory(admin_user)
         admin_keeper = Keeper(cache, admin_factory)

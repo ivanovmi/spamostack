@@ -60,7 +60,7 @@ class Simulator(object):
         self.client_factory = spam_factory.SpamFactory(self.cache, self.user,
                                                        self.keeper)
 
-    @threader
+    #@threader
     def simulate(self):
         """Simulate an actions."""
 

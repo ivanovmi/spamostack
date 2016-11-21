@@ -16,6 +16,10 @@
 from tests.unit import test
 
 
-class NoopTestCase(test.TestCase):
+class NoopRunTestCase(test.RunTestCase):
+    def test_noop(self):
+        pass
+
+class NoopCleanTestCase(test.CleanTestCase):
     def test_noop(self):
         pass
